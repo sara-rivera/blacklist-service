@@ -10,7 +10,7 @@ def test_ping_responde_ok(client):
 # ---------------------------------------------------------------- POST /blacklists
 def test_agregar_email_exitoso(client, headers, payload):
     resp = client.post("/blacklists", json=payload, headers=headers)
-    assert resp.status_code == 200
+    assert resp.status_code == 201
     data = resp.get_json()["data"]
     assert data["email"] == "bloqueado@test.com"
     assert data["blocked_reason"] == "Fraude"
