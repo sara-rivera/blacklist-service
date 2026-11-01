@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - echo "Instalando dependencias"
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
+      - pip install pytest pytest-cov
+  pre_build:
+    commands:
+      - echo "Ejecutando pruebas unitarias"
+      - python -m pytest tests/ -v --junitxml=reports/junit.xml --cov=application --cov-report=term
+  build:
+    commands:
+      - echo "Pruebas OK. Generando artefacto de despliegue"
+  post_build:
+    commands:
+      - echo "Build finalizado el $(date)"
+
+reports:
+  pytest-reports:
+    files:
+      - junit.xml
+    base-directory: reports
+    file-format: JUNITXML
+
+artifacts:
+  name: blacklist-artifact
+  files:
+    - application.py
+    - requirements.txt
+    - Procfile
+    - .ebextensions/**/*
