@@ -144,3 +144,7 @@ Estrategias de despliegue evaluadas: All at once, Rolling, Rolling with addition
 ## Pruebas
 
 La colección de Postman (`postman/`) contiene 9 escenarios con tests automáticos y ejemplos de respuesta: health check, creación exitosa, duplicado, UUID inválido, motivo mayor a 255 caracteres, solicitud sin token y consultas de emails bloqueados y no bloqueados.
+
+## Integración continua
+Cada commit en `main` dispara AWS CodePipeline, que ejecuta AWS CodeBuild:
+instala dependencias, corre las pruebas unitarias (pytest) y genera el artefacto en S3.
