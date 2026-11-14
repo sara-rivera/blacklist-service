@@ -1,0 +1,26 @@
+{
+  "family": "blacklist-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "runtimePlatform": { "cpuArchitecture": "X86_64", "operatingSystemFamily": "LINUX" },
+  "executionRoleArn": "arn:aws:iam::661771927873:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "blacklist-container",
+      "image": "<IMAGE1_NAME>",
+      "essential": true,
+      "portMappings": [ { "containerPort": 5000, "hostPort": 5000, "protocol": "tcp" } ],
+      "environment": [
+        { "name": "RDS_HOSTNAME", "value": "blacklist-db.cdaiamkyqljo.us-east-2.rds.amazonaws.com" },
+        { "name": "RDS_PORT", "value": "5432" },
+        { "name": "RDS_DB_NAME", "value": "blacklistdb" },
+        { "name": "RDS_USERNAME", "value": "postgres" },
+        { "name": "RDS_PASSWORD", "value": "SaraBlack2026x" },
+        { "name": "JWT_SECRET_KEY", "value": "08a9b25d8998dc38d22dd2a3bc47aebcd3a9609234d9c305c1e702b847cfc013" }
+      ],
+      "logConfiguration": { "logDriver": "awslogs", "options": { "awslogs-group": "/ecs/blacklist-task", "awslogs-region": "us-east-2", "awslogs-stream-prefix": "ecs" } }
+    }
+  ]
+}
