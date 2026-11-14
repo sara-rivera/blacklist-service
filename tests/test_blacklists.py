@@ -4,7 +4,7 @@
 def test_ping_responde_ok(client):
     resp = client.get("/ping")
     assert resp.status_code == 200
-    assert resp.get_json()["status"] == "ok"
+    assert resp.get_json()["status"] == "okk"
 
 
 # ---------------------------------------------------------------- POST /blacklists
