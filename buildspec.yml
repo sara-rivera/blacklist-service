@@ -13,12 +13,22 @@ phases:
     commands:
       - echo "Ejecutando pruebas unitarias"
       - python -m pytest tests/ -v --junitxml=reports/junit.xml --cov=application --cov-report=term
+      - echo "Login en ECR"
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG=build-$CODEBUILD_BUILD_NUMBER; fi
   build:
     commands:
-      - echo "Pruebas OK. Generando artefacto de despliegue"
+      - echo "Pruebas OK. Construyendo imagen $IMAGE_TAG"
+      - docker build -t $REPOSITORY_URI:latest -t $REPOSITORY_URI:$IMAGE_TAG .
   post_build:
     commands:
-      - echo "Build finalizado el $(date)"
+      - echo "Publicando imagen en ECR"
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - cat imageDetail.json
 
 reports:
   pytest-reports:
@@ -28,9 +38,7 @@ reports:
     file-format: JUNITXML
 
 artifacts:
-  name: blacklist-artifact
   files:
-    - application.py
-    - requirements.txt
-    - Procfile
-    - .ebextensions/**/*
+    - imageDetail.json
+    - appspec.yaml
+    - taskdef.json
