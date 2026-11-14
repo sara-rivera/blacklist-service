@@ -16,7 +16,7 @@ from flask_restful import Api, Resource
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow import ValidationError, fields, validate
 
-APP_VERSION = "1.0"
+APP_VERSION = "2.0"
 
 
 def build_database_uri():
