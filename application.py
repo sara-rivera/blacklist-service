@@ -170,6 +170,11 @@ api.add_resource(BlacklistResource, "/blacklists")
 api.add_resource(BlacklistCheckResource, "/blacklists/<string:email>")
 api.add_resource(HealthResource, "/ping", "/")
 
+
+@application.route("/ping/error", methods=["GET"])
+def ping_error():
+    raise Exception("Error de prueba para monitoreo New Relic")
+
 with application.app_context():
     try:
         db.create_all()
